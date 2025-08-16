@@ -4,8 +4,7 @@ import os
 import pandas as pd
 import pytest
 
-from src.reports import (datetime, report_to_file,
-                         spending_by_category, timedelta)
+from src.reports import datetime, report_to_file, spending_by_category, timedelta
 
 
 @pytest.fixture
@@ -36,15 +35,13 @@ def test_spending_by_category(sample_transactions_df):
 def test_spending_by_category_with_date(sample_transactions_df):
     """Тест с указанием конкретной даты"""
     test_date = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
-    result = spending_by_category(sample_transactions_df,
-                                  "Еда", target_date=test_date)
+    result = spending_by_category(sample_transactions_df, "Еда", target_date=test_date)
     assert len(result) == 2  # Теперь корректно ожидаем 2 транзакции
 
 
 def test_spending_by_category_no_data(sample_transactions_df):
     """Тест с несуществующей категорией"""
-    result = spending_by_category(sample_transactions_df,
-                                  "Несуществующая категория")
+    result = spending_by_category(sample_transactions_df, "Несуществующая категория")
     assert len(result) == 0
 
 

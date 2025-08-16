@@ -60,9 +60,7 @@ def spending_by_category(
     """
     try:
         # Определяем период анализа
-        end_date = datetime.strptime(
-            target_date, "%Y-%m-%d")\
-            if target_date else datetime.now()
+        end_date = datetime.strptime(target_date, "%Y-%m-%d") if target_date else datetime.now()
         start_date = end_date - timedelta(days=90)
 
         # Преобразуем даты в строки
@@ -71,22 +69,17 @@ def spending_by_category(
 
         # Фильтруем данные
         is_category = transactions_df["Категория"] == category_name
-        in_date_range = (transactions_df
-                         ["Дата операции"] >= start_date_str) & (
+        in_date_range = (transactions_df["Дата операции"] >= start_date_str) & (
             transactions_df["Дата операции"] <= end_date_str
         )
         filtered_df = transactions_df[is_category & in_date_range].copy()
 
         # Добавляем месяц для группировки
-        filtered_df["Месяц"] = (pd.to_datetime
-                                (filtered_df["Дата операции"])
-                                .dt.to_period("M"))
+        filtered_df["Месяц"] = pd.to_datetime(filtered_df["Дата операции"]).dt.to_period("M")
 
         # Группируем и агрегируем данные
         result = (
-            filtered_df.groupby("Месяц").
-            agg(Сумма=("Сумма платежа", "sum"), Кешбэк=("Кешбэк",
-                                                        "sum")).reset_index()
+            filtered_df.groupby("Месяц").agg(Сумма=("Сумма платежа", "sum"), Кешбэк=("Кешбэк", "sum")).reset_index()
         )
 
         result["Месяц"] = result["Месяц"].astype(str)

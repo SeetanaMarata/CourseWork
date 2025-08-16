@@ -3,9 +3,7 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
 
-from src.views import (get_card_stats,
-                       get_currency_rates,
-                       get_greeting, get_month_range)
+from src.views import get_card_stats, get_currency_rates, get_greeting, get_month_range
 
 
 @pytest.fixture
@@ -13,9 +11,7 @@ def sample_transactions():
     return pd.DataFrame(
         {
             "Дата операции": ["2023-01-01", "2023-01-15", "2023-02-01"],
-            "Номер карты": ["1234567890123456",
-                            "1234567890123456",
-                            "9876543210987654"],
+            "Номер карты": ["1234567890123456", "1234567890123456", "9876543210987654"],
             "Сумма платежа": [100.0, 200.0, 50.0],
             "Категория": ["Еда", "Транспорт", "Развлечения"],
             "Описание": ["Ресторан", "Такси", "Кино"],
@@ -25,8 +21,7 @@ def sample_transactions():
 
 @pytest.fixture
 def sample_settings():
-    return {"user_currencies": ["USD", "EUR"],
-            "user_stocks": ["AAPL", "GOOGL"]}
+    return {"user_currencies": ["USD", "EUR"], "user_stocks": ["AAPL", "GOOGL"]}
 
 
 def test_get_greeting():
@@ -37,9 +32,7 @@ def test_get_greeting():
 
 
 def test_get_card_stats(sample_transactions):
-    stats = get_card_stats(sample_transactions,
-                           "2023-01-01",
-                           "2023-01-31")
+    stats = get_card_stats(sample_transactions, "2023-01-01", "2023-01-31")
     assert len(stats) == 1
     assert stats[0]["last_digits"] == "3456"
     assert stats[0]["total_spent"] == 300.0

@@ -21,12 +21,9 @@ def get_greeting(time_str: str) -> str:
         return "Доброй ночи"
 
 
-def get_card_stats(df: pd.DataFrame,
-                   start_date: str,
-                   end_date: str) -> List[Dict[str, Any]]:
+def get_card_stats(df: pd.DataFrame, start_date: str, end_date: str) -> List[Dict[str, Any]]:
     """Возвращает статистику по картам"""
-    mask = ((df["Дата операции"] >= start_date)
-            & (df["Дата операции"] <= end_date))
+    mask = (df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)
     period_df = df[mask]
 
     cards = []
@@ -34,24 +31,18 @@ def get_card_stats(df: pd.DataFrame,
         card_df = period_df[period_df["Номер карты"] == card]
         total_spent = card_df["Сумма платежа"].sum()
         cashback = total_spent / 100
-        cards.append({"last_digits": card[-4:],
-                      "total_spent": round(total_spent, 2),
-                      "cashback": round(cashback, 2)})
+        cards.append({"last_digits": card[-4:], "total_spent": round(total_spent, 2), "cashback": round(cashback, 2)})
     return cards
 
 
-def get_top_transactions(df: pd.DataFrame,
-                         start_date: str, end_date: str,
-                         n: int = 5) -> list[dict[Hashable, Any]]:
+def get_top_transactions(df: pd.DataFrame, start_date: str, end_date: str, n: int = 5) -> list[dict[Hashable, Any]]:
     """Возвращает топ-N транзакций по сумме платежа"""
-    mask = (df["Дата операции"] >= start_date
-            ) & (df["Дата операции"] <= end_date)
+    mask = (df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)
     period_df = df[mask]
 
     top_transactions = period_df.nlargest(n, "Сумма платежа")
     return (
-        top_transactions[["Дата операции", "Сумма платежа",
-                          "Категория", "Описание"]]
+        top_transactions[["Дата операции", "Сумма платежа", "Категория", "Описание"]]
         .rename(
             columns={
                 "Дата операции": "date",
@@ -69,8 +60,7 @@ def get_currency_rates(currencies: List[str]) -> List[Dict[str, Any]]:
     rates = []
     for currency in currencies:
         try:
-            response = requests.get(f"https://api.exchangerate-api."
-                                    f"com/v4/latest/{currency}")
+            response = requests.get(f"https://api.exchangerate-api." f"com/v4/latest/{currency}")
             data = response.json()
             rates.append({"currency": currency, "rate": data["rates"]["RUB"]})
         except Exception as e:
@@ -106,16 +96,12 @@ def get_month_range(date_str: str) -> tuple:
     return start_date, end_date
 
 
-def main_page(date_time: str,
-              excel_path: str = "data/operations.xlsx") -> Dict[str, Any]:
+def main_page(date_time: str, excel_path: str = "data/operations.xlsx") -> Dict[str, Any]:
     """Главная функция для генерации JSON-ответа"""
     try:
         # Загрузка данных
         df = pd.read_excel(excel_path)
-        df["Дата операции"] = (
-            pd.to_datetime(df["Дата операции"])
-            .dt.strftime("%Y-%m-%d")
-        )
+        df["Дата операции"] = pd.to_datetime(df["Дата операции"]).dt.strftime("%Y-%m-%d")
 
         # Загрузка настроек пользователя
         with open("user_settings.json") as f:

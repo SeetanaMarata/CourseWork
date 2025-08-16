@@ -4,9 +4,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 
-def calculate_cashback_categories(transactions: List[Dict[str, Any]],
-                                  year: int,
-                                  month: int) -> Dict[str, float]:
+def calculate_cashback_categories(transactions: List[Dict[str, Any]], year: int, month: int) -> Dict[str, float]:
     """
     Анализирует выгодность категорий для повышенного
     кешбэка за указанный месяц и год.
@@ -21,9 +19,7 @@ def calculate_cashback_categories(transactions: List[Dict[str, Any]],
     """
     try:
         # Фильтрация транзакций по дате
-        filtered_transactions = filter(
-            lambda t: _is_transaction_in_period(
-                t, year, month), transactions)
+        filtered_transactions = filter(lambda t: _is_transaction_in_period(t, year, month), transactions)
 
         # Группировка по категориям и расчет кешбэка
         category_cashback = {}
@@ -35,13 +31,11 @@ def calculate_cashback_categories(transactions: List[Dict[str, Any]],
             if category not in category_cashback:
                 category_cashback[category] = 0.0
 
-            category_cashback[category] += cashback \
-                if cashback else amount * 0.01
+            category_cashback[category] += cashback if cashback else amount * 0.01
             # 1% если кешбэк не указан
 
         # Сортировка по убыванию кешбэка
-        sorted_categories = sorted(category_cashback.items(),
-                                   key=lambda item: item[1], reverse=True)
+        sorted_categories = sorted(category_cashback.items(), key=lambda item: item[1], reverse=True)
 
         return dict(sorted_categories)
 
@@ -50,9 +44,7 @@ def calculate_cashback_categories(transactions: List[Dict[str, Any]],
         raise
 
 
-def _is_transaction_in_period(transaction: dict[str, Any],
-                              year: int,
-                              month: int) -> bool:
+def _is_transaction_in_period(transaction: dict[str, Any], year: int, month: int) -> bool:
     """Проверяет, относится ли транзакция к указанному периоду"""
     date_str = transaction.get("Дата операции")
     if not date_str:
@@ -60,15 +52,13 @@ def _is_transaction_in_period(transaction: dict[str, Any],
 
     try:
         transaction_date = datetime.strptime(date_str, "%Y-%m-%d")
-        return (transaction_date.year == year and transaction_date
-                .month == month)
+        return transaction_date.year == year and transaction_date.month == month
     except ValueError:
         logging.warning(f"Invalid date format in transaction: {date_str}")
         return False
 
 
-def get_cashback_categories_json(data: List[Dict[str, Any]],
-                                 year: int, month: int) -> str:
+def get_cashback_categories_json(data: List[Dict[str, Any]], year: int, month: int) -> str:
     """
     Возвращает JSON с анализом выгодных категорий для кешбэка
 
