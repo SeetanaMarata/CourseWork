@@ -1,0 +1,5 @@
+{
+  "user_currencies": ["USD", "EUR"],
+  "user_stocks": ["AAPL", "GOOGL", "TSLA"],
+  "cashback_categories": ["Супермаркеты", "Рестораны", "Транспорт"]
+}
